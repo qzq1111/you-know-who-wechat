@@ -1,54 +1,61 @@
 //index.js
+const util = require('../../utils/util.js')
+
 //获取应用实例
 const app = getApp()
 
 Page({
   data: {
-    motto: 'Hello World',
-    userInfo: {},
-    hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo')
+    articles: [],
+    page: 1,
+    more: true,
   },
-  //事件处理函数
-  bindViewTap: function() {
-    wx.navigateTo({
-      url: '../logs/logs'
-    })
+  onLoad: function (options) {
+    this.getArticles(this, this.data.page);
   },
-  onLoad: function () {
-    if (app.globalData.userInfo) {
-      this.setData({
-        userInfo: app.globalData.userInfo,
-        hasUserInfo: true
-      })
-    } else if (this.data.canIUse){
-      // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-      // 所以此处加入 callback 以防止这种情况
-      app.userInfoReadyCallback = res => {
-        this.setData({
-          userInfo: res.userInfo,
-          hasUserInfo: true
-        })
-      }
-    } else {
-      // 在没有 open-type=getUserInfo 版本的兼容处理
-      wx.getUserInfo({
-        success: res => {
-          app.globalData.userInfo = res.userInfo
-          this.setData({
-            userInfo: res.userInfo,
-            hasUserInfo: true
-          })
-        }
-      })
+  onReachBottom: function () {
+    if (!this.data.more){
+      return
     }
+    this.getArticles(this, this.data.page);
   },
-  getUserInfo: function(e) {
-    console.log(e)
-    app.globalData.userInfo = e.detail.userInfo
-    this.setData({
-      userInfo: e.detail.userInfo,
-      hasUserInfo: true
+  getArticles: function (that, page) {
+    
+    wx.request({
+      url: app.globalData.url + "/articles",
+      method: 'GET',
+      data: {
+        page: page
+      },
+      success: function (res) {
+        var data = res.data;
+        if (data.code === 0) {
+          if (data.data.length === 0) {
+            that.data.more = false
+            return
+          } else {
+            that.data.page += 1
+          }
+          var articles = data.data;
+          // 转换时间格式
+          articles.map(article => {
+            article.create_time = util.formatTime(new Date(article.create_time))
+            return article
+          })
+          var old = that.data.articles
+          old = old.concat(articles)
+          that.setData({articles: old});
+        }
+      },
+      fail: function () {},
+    })
+
+  },
+  
+  readArticle: function (e) {
+    console.log(e.currentTarget.dataset.articleId);
+    wx.navigateTo({
+      url:'../article/article?id='+e.currentTarget.dataset.articleId,
     })
   }
 })

@@ -1,21 +1,29 @@
 /**index.wxss**/
-.userinfo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.artile-item {
+  background-color: #fff;
+  margin-bottom: 10px;
+  padding: 5px;
 }
 
-.userinfo-avatar {
-  width: 128rpx;
-  height: 128rpx;
-  margin: 20rpx;
-  border-radius: 50%;
+.article-title {
+  font-size: 15px;
+  margin-bottom: 5px;
 }
 
-.userinfo-nickname {
-  color: #aaa;
+.aryticle-summar {
+  font-size: 12px;
+  color: #8e8787;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  margin-bottom: 5px;
 }
 
-.usermotto {
-  margin-top: 200px;
+.aryticle-footer{
+  font-size: 10px;
+  margin-bottom: 5px;
+}
+.aryticle-footer span{
+  margin-right: 10px;
 }
